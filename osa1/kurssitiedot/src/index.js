@@ -24,11 +24,9 @@ const Part = (props) => {
 const Content = (props) => {
     return (
         <div>
-            <p>
-                <Part part={props.parts[0].name} exercise={props.parts[0].exercises} />
-                <Part part={props.parts[1].name} exercise={props.parts[1].exercises} />
-                <Part part={props.parts[2].name} exercise={props.parts[2].exercises} />
-            </p>
+            <Part part={props.parts[0].name} exercise={props.parts[0].exercises} />
+            <Part part={props.parts[1].name} exercise={props.parts[1].exercises} />
+            <Part part={props.parts[2].name} exercise={props.parts[2].exercises} />       
         </div>
     )
 }
@@ -75,7 +73,7 @@ ReactDOM.render(<App />, document.getElementById('root'))
 
 
 /* 
- * =========== Säästöön tehtävä 1.4 ============
+ * =========== SÃ¤Ã¤stÃ¶Ã¶n tehtÃ¤vÃ¤ 1.4 ============
  * 
  * 
 import React from 'react'
@@ -145,7 +143,7 @@ const App = () => {
             <Header course={course} />
             <Content parts={parts} />
             <Total parts={parts} />
-    </div>
+        </div>
     )
 }
 
