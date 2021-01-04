@@ -46,7 +46,7 @@ const App = () => {
                     setType('error')
                     setTimeout(() => {
                         setNewNotification(null)
-                    }), 5000
+                    }, 5000)
                 })
 
         } else {
