@@ -36,19 +36,22 @@ const App = () => {
                     setType('notification')
                     setTimeout(() => {
                         setNewNotification(null)
+                        setType(null)
                     }, 5000)
-                    setNewName('')
-                    setNewNumber('')
+                    
                 })
                 .catch(error => {
                     console.log(error.response.data)
-                    setNewNotification(error.response.data)
+                    setNewNotification(error.response.data.error)
                     setType('error')
                     setTimeout(() => {
                         setNewNotification(null)
+                        setType(null)
                     }, 5000)
                 })
 
+                setNewName('')
+                setNewNumber('')
         } else {
             if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
                 const found = persons.find(p => p.name === personObject.name)
@@ -62,6 +65,7 @@ const App = () => {
                         setType('notification')
                         setTimeout(() => {
                             setNewNotification(null)
+                            setType(null)
                         }, 5000)
 
                     }).catch(() => {
@@ -69,6 +73,7 @@ const App = () => {
                         setType('error')
                         setTimeout(() => {
                             setNewNotification(null)
+                            setType(null)
                         }, 5000)
 
                     })
