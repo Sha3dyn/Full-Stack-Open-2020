@@ -32,13 +32,22 @@ const App = () => {
                 .create(personObject)
                 .then(response => {
                     setPersons(persons.concat(response.data))
+                    setNewNotification(`Added ${newName}`)
+                    setType('notification')
+                    setTimeout(() => {
+                        setNewNotification(null)
+                    }, 5000)
+                    setNewName('')
+                    setNewNumber('')
                 })
-
-            setNewNotification(`Added ${newName}`)
-            setType('notification')
-            setTimeout(() => {
-                setNewNotification(null)
-            }, 5000)
+                .catch(error => {
+                    console.log(error.response.data)
+                    setNewNotification(error.response.data)
+                    setType('error')
+                    setTimeout(() => {
+                        setNewNotification(null)
+                    }), 5000
+                })
 
         } else {
             if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
