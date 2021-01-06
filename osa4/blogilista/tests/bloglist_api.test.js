@@ -61,6 +61,30 @@ describe('Get all blogs from database', () => {
   })
 })
 
+describe('Post new blogs to database', () => {
+  test('A valid blog can be added', async() => {
+    const newBlog = {
+      _id: '5a422b891b54a676234d17fa', 
+      title: 'First class tests', 
+      author: 'Robert C. Martin', 
+      url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll', 
+      likes: 10, 
+      __v: 0 
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const author = response.body.map(r => r.author)
+
+    expect(response.body).toHaveLength(initialBlogs.length+1)
+    expect(author).toContain('Robert C. Martin')
+  })
+})
 
 afterAll(() => {
   mongoose.connection.close()
