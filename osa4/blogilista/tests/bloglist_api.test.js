@@ -84,6 +84,26 @@ describe('Post new blogs to database', () => {
     expect(response.body).toHaveLength(initialBlogs.length+1)
     expect(author).toContain('Robert C. Martin')
   })
+
+  test('New blog with empty likes field sets likes to zero', async() => {
+    const newBlog = {
+      _id: '5a422ba71b54a676234d17fb', 
+      title: 'TDD harms architecture', 
+      author: 'Robert C. Martin', 
+      url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',  
+      __v: 0  
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+
+    expect(response.body[response.body.length-1].likes).toBe(0)
+  }) 
 })
 
 afterAll(() => {
