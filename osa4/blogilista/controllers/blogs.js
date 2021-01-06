@@ -17,11 +17,16 @@ blogsRouter.post('/', (request, response) => {
     likes: request.body.likes || 0,
   })
   
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result)
-    })
+  if(blog.title !== undefined && blog.url !== undefined) {
+    blog
+      .save()
+      .then(result => {
+        response.status(201).json(result)
+      })
+  } else {
+    response.status(400).end()
+  }
+  
 })
 
 module.exports = blogsRouter

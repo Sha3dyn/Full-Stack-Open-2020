@@ -104,6 +104,30 @@ describe('Post new blogs to database', () => {
 
     expect(response.body[response.body.length-1].likes).toBe(0)
   }) 
+
+  test('Response status 400 if title and url are empty', async() => {
+    const newBlog = {
+      title: 'Type wars', 
+      author: 'Robert C. Martin', 
+      likes: 2, 
+    }
+
+    const anotherBlog = {
+      author: 'Robert C. Martin', 
+      url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll', 
+      likes: 10, 
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    await api
+      .post('/api/blogs')
+      .send(anotherBlog)
+      .expect(400)
+  })
 })
 
 afterAll(() => {
