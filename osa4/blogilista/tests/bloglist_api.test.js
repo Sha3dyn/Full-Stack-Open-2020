@@ -53,6 +53,12 @@ describe('Get all blogs from database', () => {
     const authors = response.body.map(r => r.author)
     expect(authors).toContain('Edsger W. Dijkstra')
   })
+
+  test('blog contains id field', async() => {
+    const response = await api.get('/api/blogs')
+
+    expect(response.body[0].id).toBeDefined()
+  })
 })
 
 
