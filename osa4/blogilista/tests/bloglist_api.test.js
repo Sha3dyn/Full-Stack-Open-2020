@@ -2,36 +2,13 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const Blog = require('../models/blog')
 const app = require('../app')
+const helper = require('./test_helper')
 
 const api = supertest(app)
 
-const initialBlogs = [ 
-  { 
-    _id: '5a422a851b54a676234d17f7', 
-    title: 'React patterns', 
-    author: 'Michael Chan', 
-    url: 'https://reactpatterns.com/', 
-    likes: 7,
-    __v: 0 
-  }, 
-  { 
-    _id: '5a422aa71b54a676234d17f8', 
-    title: 'Go To Statement Considered Harmful', 
-    author: 'Edsger W. Dijkstra', 
-    url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html', 
-    likes: 5, 
-    __v: 0 
-  }
-]
-
 beforeEach(async () => {
   await Blog.deleteMany({ })
-
-  let blogObject = new Blog(initialBlogs[0])
-  await blogObject.save()
-
-  blogObject = new Blog(initialBlogs[1])
-  await blogObject.save()
+  await Blog.insertMany(helper.initialBlogs)
 })
 
 describe('Get all blogs from database', () => {
@@ -44,7 +21,7 @@ describe('Get all blogs from database', () => {
 
   test('return correct amount of blogs', async() => {
     const response = await api.get('/api/blogs')
-    expect(response.body).toHaveLength(initialBlogs.length)
+    expect(response.body).toHaveLength(helper.initialBlogs.length)
   })
 
   test('specific blog is found within the returned ones', async() => {
@@ -75,13 +52,13 @@ describe('Post new blogs to database', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(201)
+      .expect(200)
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
     const author = response.body.map(r => r.author)
 
-    expect(response.body).toHaveLength(initialBlogs.length+1)
+    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
     expect(author).toContain('Robert C. Martin')
   })
 
@@ -97,12 +74,12 @@ describe('Post new blogs to database', () => {
     await api
       .post('/api/blogs')
       .send(newBlog)
-      .expect(201)
+      .expect(200)
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
 
-    expect(response.body[response.body.length-1].likes).toBe(0)
+    expect(response.body[response.body.length - 1].likes).toBe(0)
   }) 
 
   test('Response status 400 if title and url are empty', async() => {
@@ -134,14 +111,36 @@ describe('deletion of a blog', () => {
   test('succeeds with status code 204 if id is valid', async() => {
     const blogsAtStart = await api.get('/api/blogs')
     const blogToDelete = blogsAtStart.body[0]
-    console.log('to delete ' + blogToDelete.id)
+
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
       .expect(204)
 
     const blogsAtEnd = await api.get('/api/blogs')
 
-    expect(blogsAtEnd.body).toHaveLength(initialBlogs.length - 1)
+    expect(blogsAtEnd.body).toHaveLength(helper.initialBlogs.length - 1)
+  })
+})
+
+describe('update of a blog', () => {
+  test('update succeeds', async() => {
+    const blog = {
+      title: 'updated'
+    }
+
+    const blogs = await api.get('/api/blogs')
+    const blogToUpdate = blogs.body[0].id
+    console.log(blogToUpdate)
+
+    api
+      .put(`/api/blogs/${blogToUpdate}`)
+      .send(blog)
+      .expect(200)
+
+    const response = await api.get('/api/blogs')
+    const ids = response.body.map(r => r.id)
+
+    expect(ids).toContain(blogToUpdate)
   })
 })
 
