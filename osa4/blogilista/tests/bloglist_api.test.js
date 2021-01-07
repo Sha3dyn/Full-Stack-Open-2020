@@ -128,19 +128,18 @@ describe('update of a blog', () => {
       title: 'updated'
     }
 
-    const blogs = await api.get('/api/blogs')
-    const blogToUpdate = blogs.body[0].id
-    console.log(blogToUpdate)
+    const blogsAtStart = await api.get('/api/blogs')
+    const blogToUpdate = blogsAtStart.body[0]
 
     api
-      .put(`/api/blogs/${blogToUpdate}`)
+      .put(`/api/blogs/${blogToUpdate.id}`)
       .send(blog)
       .expect(200)
 
-    const response = await api.get('/api/blogs')
-    const ids = response.body.map(r => r.id)
+    const blogsAtEnd = await api.get('/api/blogs')
+    const titles = blogsAtEnd.body.map(r => r.title)
 
-    expect(ids).toContain(blogToUpdate)
+    expect(titles).toContain(blogToUpdate.title)
   })
 })
 
